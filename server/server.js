@@ -5,11 +5,13 @@ const routes = require('./routes');
 
 // Setup to use apollo server on the back-end.
 const { ApolloServer } = require('apollo-server-express');
+const { authMiddleware } = require('./utils/auth');
 const { typeDefs, resolvers } = require('./schemas');
 const db = require('./config/connection');
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: authMiddleware,
 })
 
 server.applyMiddleware({ app });
