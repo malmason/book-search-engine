@@ -4,6 +4,8 @@ import { Jumbotron, Container, Col, Form, Button, Card, CardColumns } from 'reac
 import Auth from '../utils/auth';
 import { saveBook, searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
+import { SAVE_BOOK } from '../utils/mutation';
+import { useMutation } from '@apollo/client';
 
 const SearchBooks = () => {
   // create state for holding returned google api data
@@ -57,6 +59,9 @@ const SearchBooks = () => {
     // find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
 
+    // Set up to use graph ql mutation to save a book. 
+    const [savedBooks, { error, data}] = useMutation(SAVE_BOOK);
+
     // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
@@ -65,7 +70,7 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await saveBook(bookToSave, token);
+      const response = await saveBook(savedBooks, token);
 
       if (!response.ok) {
         throw new Error('something went wrong!');

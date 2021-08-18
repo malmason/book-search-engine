@@ -20,11 +20,11 @@ const resolvers = {
     },
 
     // Needs to be finished, look up creating an input type for Graphql ******
-    saveBook: async (parent, { username, book }, context) => {
+    saveBook: async (parent, { username, savedBooks }, context) => {
       if (context.user) {
          return User.findOneAndUpdate(
         { _id: user._id },
-        { $addToSet: { savedBooks: book } },
+        { $addToSet: { savedBooks: savedBooks } },
         { new: true, runValidators: true }
         )
       }
@@ -45,11 +45,11 @@ const resolvers = {
       return { token, user };
 
     },
-    removeBook: async (parent, { book }, context) => {
+    removeBook: async (parent, { savedBooks }, context) => {
       if (context.user) {
         return User.findOneAndUpdate(
         { _id: user._id },
-        { $pull: { savedBooks: { bookId: book } } },
+        { $pull: { savedBooks: { savedBooks } } },
         { new: true }
         );
       }
