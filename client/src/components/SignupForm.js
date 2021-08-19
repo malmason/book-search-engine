@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-import { createUser } from '../utils/API';
 import Auth from '../utils/auth';
 
 
@@ -17,7 +16,7 @@ const SignupForm = () => {
   const [showAlert, setShowAlert] = useState(false);
 
   // Add in the logic for ADD_USER
-  const [addUser, { error, data}] = useMutation(ADD_USER);
+  const [addUser, { error }] = useMutation(ADD_USER);
 
 
   const handleInputChange = (event) => {
@@ -41,13 +40,9 @@ const SignupForm = () => {
         variables: {...userFormData},
       });
 
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
-
       const { token, user } = { data };
       console.log(user);
-      // Auth.login(token);
+
       Auth.login(data.addUser.token);
     } catch (err) {
       console.error(err);

@@ -15,7 +15,7 @@ const LoginForm = () => {
   const [showAlert, setShowAlert] = useState(false);
 
   // Use mutation from LOGIN_USER
-  const [login, { error, data }] = useMutation(LOGIN_USER);
+  const [login, { error }] = useMutation(LOGIN_USER);
   
 
   const handleInputChange = (event) => {
@@ -39,14 +39,8 @@ const LoginForm = () => {
         variables: { ...userFormData },
       });
 
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
 
-      // const { token, user } = await response.json();
-      const { token, user } = { data };
       console.log(user);
-      // Auth.login(token);
       Auth.login(data.login.token);
     } catch (err) {
       console.error(err);
@@ -54,7 +48,6 @@ const LoginForm = () => {
     }
 
     setUserFormData({
-      username: '',
       email: '',
       password: '',
     });
