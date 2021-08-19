@@ -6,31 +6,34 @@ const resolvers = {
   Query: {
     me: async (parent, args, context) => {
       if (context.user) {
-           return User.findOne({  $or: [{ _id: user ? user._id : user.id }, { username: user.username }],
-       });
+           return User.findOne({ _id: context.user._id });
       }
       throw new AuthenticationError('You need to be logged in!');
     }
   },
 
   Mutation: {
-    addUser: async (parent, { username, email, password }) => {
-      const newUser = await User.create({ username, email, password });
-      const token = signToken(newUser);
+    addUser: async (parent, args) => {
+      const user = await User.create(args);
+      const token = signToken(user);
+
+      return { token, user}
     },
 
     // Needs to be finished, look up creating an input type for Graphql ******
-    saveBook: async (parent, { username, savedBooks }, context) => {
+    saveBook: async (parent, { bookData }  , context) => {
       if (context.user) {
-         return User.findOneAndUpdate(
+         const updatedUser = await User.findOneAndUpdate(
         { _id: user._id },
-        { $addToSet: { savedBooks: savedBooks } },
-        { new: true, runValidators: true }
+        { $push: { savedBooks: bookData } },
+        { new: true }
         )
+
+        return updatedUser;
       }
     },
-    login: async (parent, { username, email, password }) => {
-      const user = User.findOne({ $or: [{ username: username}, { email: email }]});
+    login: async (parent, { email, password }) => {
+      const user = User.findOne({ email });
       if(!user) {
         throw new AuthenticationError('No user found!')
       }
@@ -45,14 +48,18 @@ const resolvers = {
       return { token, user };
 
     },
-    removeBook: async (parent, { savedBooks }, context) => {
+    removeBook: async (parent, args , context) => {
       if (context.user) {
-        return User.findOneAndUpdate(
+        const updatedUser= await User.findOneAndUpdate(
         { _id: user._id },
-        { $pull: { savedBooks: { savedBooks } } },
+        { $pull: { savedBooks: { bookId: args.bookId } } },
         { new: true }
         );
+
+        return updatedUser;
       }
+      throw new AuthenticationError('Unable to delete book!');
+
     }
   },
 };
