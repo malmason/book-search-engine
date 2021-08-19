@@ -9,6 +9,8 @@ const { ApolloServer } = require('apollo-server-express');
 const { authMiddleware } = require('./utils/auth');
 const { typeDefs, resolvers } = require('./schemas');
 
+const app = express();
+const PORT = process.env.PORT || 3001;
 
 let server;
 async function startApolloServer() {
@@ -18,17 +20,13 @@ async function startApolloServer() {
   context: authMiddleware,
   plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
   playground: true
-})
+});
 
   await server.start();
   server.applyMiddleware({ app });
 }
 
 startApolloServer()
-
-
-const app = express();
-const PORT = process.env.PORT || 3001;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
