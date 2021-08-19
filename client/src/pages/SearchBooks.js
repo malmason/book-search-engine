@@ -8,6 +8,8 @@ import { SAVE_BOOK } from '../utils/mutation';
 import { useMutation } from '@apollo/client';
 
 const SearchBooks = () => {
+
+  const [saveBook, { error }] = useMutation(SAVE_BOOK);
   // create state for holding returned google api data
   const [searchedBooks, setSearchedBooks] = useState([]);
   // create state for holding our search field data
@@ -55,9 +57,6 @@ const SearchBooks = () => {
   };
 
 
-  // Set up to use graph ql mutation to save a book. 
-    const [savedBooks, { error, data}] = useMutation(SAVE_BOOK);
-
 
   // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
@@ -72,9 +71,11 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await saveBook(savedBooks, token);
+      const { data } = await saveBook({
+        variables: { bookData: { ...bookToSave }}
+      })
 
-      if (!response.ok) {
+      if (error) {
         throw new Error('something went wrong!');
       }
 
