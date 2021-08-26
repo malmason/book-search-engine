@@ -21,7 +21,6 @@ const resolvers = {
       return { token, user}
     },
 
-    // Needs to be finished, look up creating an input type for Graphql ******
     saveBook: async (parent, { bookData }  , context) => {
       if (context.user) {
          const updatedUser = await User.findOneAndUpdate(
